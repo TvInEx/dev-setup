@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$' || true)
+
+if [ -z "$files" ]; then
+    exit 0
+fi
+
+echo "Запускаю ruff..."
+
+if command -v ruff &>/dev/null; then
+    echo "$files" | xargs ruff check --fix
+    echo "$files" | xargs ruff format
+else
+    echo "ruff не установлен, пропускаю"
+fi
